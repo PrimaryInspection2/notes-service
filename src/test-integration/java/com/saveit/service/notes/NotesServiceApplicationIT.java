@@ -1,12 +1,12 @@
 package com.saveit.service.notes;
 
+import com.saveit.service.notes.config.TestContainersConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.utility.TestcontainersConfiguration;
 
 @ActiveProfiles("it")
-@SpringBootTest(classes = {NotesServiceApplication.class, TestcontainersConfiguration.class})
+@SpringBootTest(classes = {NotesServiceApplication.class, TestContainersConfiguration.class})
 class NotesServiceApplicationIT {
 
     @Test

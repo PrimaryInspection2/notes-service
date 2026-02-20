@@ -17,15 +17,15 @@ public class TestContainersConfiguration {
     @SuppressWarnings("resource")
     public PostgreSQLContainer postgresContainer() {
         return new PostgreSQLContainer(DockerImageName.parse("postgres:17.2-alpine"))
+                .withDatabaseName("notes-service")
+                .withUsername("note-service-local-user")
+                .withPassword("note-service-local-password")
                 .withCommand("postgres", "-c", "log_statement=all")
                 .withReuse(true);
     }
 
-    /**
-     * Zipkin container for tracing tests.
-     */
     @Bean
-    @ServiceConnection(name = "zipkin")
+    @ServiceConnection(name = "openzipkin/zipkin")
     public GenericContainer<?> zipkinContainer() {
         return new GenericContainer<>(DockerImageName.parse("openzipkin/zipkin:latest"))
                 .withExposedPorts(9411);
