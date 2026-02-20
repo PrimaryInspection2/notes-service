@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    username: note-service-local-user
+    password: note-service-local-password
+    url: jdbc:tc:postgresql:17.2-alpine:///notes-service
+logging:
+  level:
+    com.saveit: ${LOGGING_LEVEL_APP:INFO}
+    org.springframework: ${LOGGING_LEVEL_SPRING:INFO}
+
+
