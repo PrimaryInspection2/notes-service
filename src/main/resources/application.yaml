@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILE_ACTIVE}
+  application:
+    name: service-notes
+  datasource:
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    url_protocol: "jdbc:postgresql://"
+    url_port: ":5433/"
+    url: ${spring.datasource.url_protocol}${DATASOURCE_HOST}${spring.datasource.url_port}${DATASOURCE_DBNAME}
+
+server:
+  port: 9004
+  servlet:
+    context-path: /service-notes
+
+management:
+  server:
+    port: 9192
+  endpoints:
+    web:
+      exposure:
+        include: info, health, metrics, loggers, monitoring
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.saveit: ${LOGGING_LEVEL_APP:INFO}
+    org.springframework: ${LOGGING_LEVEL_SPRING:INFO}
