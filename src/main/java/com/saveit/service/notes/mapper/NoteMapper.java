@@ -2,8 +2,8 @@ package com.saveit.service.notes.mapper;
 
 import com.saveit.service.notes.repository.entity.NoteEntity;
 import com.saveit.service.notes.repository.entity.TagEntity;
-import com.saveit.service.notes.web.dto.NoteRequestDto;
 import com.saveit.service.notes.web.dto.NoteResponseDto;
+import com.saveit.service.notes.web.dto.NoteServiceRequestDto;
 import com.saveit.service.notes.web.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,10 +22,10 @@ public class NoteMapper {
 
     private final TagMapper tagMapper;
 
-    public NoteEntity toEntity(NoteRequestDto dto, String userId) {
+    public NoteEntity toEntity(NoteServiceRequestDto dto) {
         NoteEntity entity = new NoteEntity();
-        entity.setNoteId(UUID.randomUUID().toString());
-        entity.setUserId(userId); //fixme implement it when user-service ready
+        entity.setNoteId(dto.noteId());
+        entity.setUserId(dto.userId());
         entity.setTitle(dto.title());
         entity.setContent(dto.content());
         entity.setSource(dto.source());
@@ -34,7 +34,7 @@ public class NoteMapper {
 
         if (dto.tags() != null) {
             Set<TagEntity> tagEntities = dto.tags().stream()
-                    .map(tagDto -> tagMapper.toEntity(tagDto, userId))
+                    .map(tagDto -> tagMapper.toEntity(tagDto, dto.userId()))
                     .collect(Collectors.toSet());
             entity.setTags(tagEntities);
         }
@@ -42,7 +42,7 @@ public class NoteMapper {
         return entity;
     }
 
-    public void updateEntity(NoteEntity existing, NoteRequestDto dto) {
+    public void updateEntity(NoteEntity existing, NoteServiceRequestDto dto) {
         existing.setTitle(dto.title());
         existing.setContent(dto.content());
         existing.setSource(dto.source());

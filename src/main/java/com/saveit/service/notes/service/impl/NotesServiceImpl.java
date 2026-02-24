@@ -4,15 +4,14 @@ import com.saveit.service.notes.mapper.NoteMapper;
 import com.saveit.service.notes.repository.NoteRepository;
 import com.saveit.service.notes.repository.entity.NoteEntity;
 import com.saveit.service.notes.service.NoteService;
-import com.saveit.service.notes.web.dto.NoteRequestDto;
 import com.saveit.service.notes.web.dto.NoteResponseDto;
+import com.saveit.service.notes.web.dto.NoteServiceRequestDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,10 +23,9 @@ public class NotesServiceImpl implements NoteService {
     private final NoteMapper noteMapper;
 
     @Override
-    public NoteResponseDto create(NoteRequestDto request) {
-        String userId = UUID.randomUUID().toString();  //fixme implement it when user-service ready
-        log.info("Creating note for userId={}", userId);
-        NoteEntity entity = noteMapper.toEntity(request, userId);
+    public NoteResponseDto create(NoteServiceRequestDto request) {
+        log.info("Creating note for userId={}", request.userId());
+        NoteEntity entity = noteMapper.toEntity(request);
         NoteEntity saved = noteRepository.save(entity);
         log.info("Note created with id={}", saved.getNoteId());
         return noteMapper.toDto(saved);
@@ -42,10 +40,11 @@ public class NotesServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteResponseDto update(String id, NoteRequestDto request) {
-        log.info("Updating note id={}", id);
-        NoteEntity existing = noteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Note not found: " + id));
+    public NoteResponseDto update(NoteServiceRequestDto request) {
+        String noteId = request.noteId();
+        log.info("Updating note id={}", noteId);
+        NoteEntity existing = noteRepository.findById(noteId)
+                .orElseThrow(() -> new EntityNotFoundException("Note not found: " + noteId));
         noteMapper.updateEntity(existing, request);
         NoteEntity saved = noteRepository.save(existing);
         log.info("Note updated: {}", saved.getNoteId());

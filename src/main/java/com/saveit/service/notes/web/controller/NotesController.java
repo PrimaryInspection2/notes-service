@@ -1,7 +1,7 @@
 package com.saveit.service.notes.web.controller;
 
 import com.saveit.service.notes.service.NoteService;
-import com.saveit.service.notes.web.dto.NoteRequestDto;
+import com.saveit.service.notes.web.dto.NoteServiceRequestDto;
 import com.saveit.service.notes.web.dto.NoteResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class NotesController {
     private final NoteService notesService;
 
     @PostMapping
-    public NoteResponseDto create(@RequestBody NoteRequestDto request) {
+    public NoteResponseDto create(@RequestBody NoteServiceRequestDto request) {
         log.info("Create note for");
         return notesService.create(request);
     }
@@ -30,9 +30,9 @@ public class NotesController {
     }
 
     @PutMapping("/{id}")
-    public NoteResponseDto update(@PathVariable String id, @RequestBody NoteRequestDto request) {
-        log.info("Update note id={}", id);
-        return notesService.update(id, request);
+    public NoteResponseDto update(@RequestBody NoteServiceRequestDto request) {
+        log.info("Update note id={}", request.noteId());
+        return notesService.update(request);
     }
 
     @DeleteMapping("/{id}")

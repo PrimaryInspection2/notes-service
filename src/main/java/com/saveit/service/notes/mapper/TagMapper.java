@@ -13,7 +13,7 @@ public class TagMapper {
 
     public TagEntity toEntity(TagDto dto, String userId) {
         TagEntity entity = new TagEntity();
-        entity.setTagId(UUID.randomUUID().toString());
+        entity.setTagId(dto.tagId());
         entity.setUserId(userId); //fixme implement it when user-service ready
         entity.setName(dto.name());
         entity.setColor(dto.color());
