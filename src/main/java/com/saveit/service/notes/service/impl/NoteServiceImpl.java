@@ -24,7 +24,7 @@ public class NoteServiceImpl implements NoteService {
 
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;
-    private final TagService tagService;
+    private final TagServiceImpl tagServiceImpl;
 
     @Override
     @Transactional
@@ -71,7 +71,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     private NoteResponseDto createNote(NoteServiceRequestDto dto) {
-        Set<TagEntity> processedTags = tagService.processTags(dto.tags(), dto.userId());
+        Set<TagEntity> processedTags = tagServiceImpl.processTags(dto.tags(), dto.userId());
 
         NoteEntity entity = noteMapper.toEntity(dto);
         entity.setTags(processedTags);
@@ -82,7 +82,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     private NoteResponseDto updateNote(NoteEntity existing, NoteServiceRequestDto dto) {
-        Set<TagEntity> updatedTags = tagService.processTags(dto.tags(), existing.getUserId());
+        Set<TagEntity> updatedTags = tagServiceImpl.processTags(dto.tags(), existing.getUserId());
 
         noteMapper.updateEntity(existing, dto);
         existing.setTags(updatedTags);

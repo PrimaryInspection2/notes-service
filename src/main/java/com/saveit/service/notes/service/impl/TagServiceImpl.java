@@ -3,12 +3,14 @@ package com.saveit.service.notes.service.impl;
 import com.saveit.service.notes.mapper.TagMapper;
 import com.saveit.service.notes.repository.TagRepository;
 import com.saveit.service.notes.repository.entity.TagEntity;
+import com.saveit.service.notes.service.TagService;
 import com.saveit.service.notes.web.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -16,22 +18,23 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TagService {
+public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
 
+    @Override
     @Transactional
     public Set<TagEntity> processTags(Set<TagDto> requestDto, String userId) {
         if (requestDto == null || requestDto.isEmpty()) {
             return Collections.emptySet();
         }
-        Set<String> tagNames = requestDto.stream()
+        Set<String> requestedTagNamesUnique = requestDto.stream()
                 .map(TagDto::name)
                 .collect(Collectors.toSet());
 
         Map<String, TagEntity> existingTags = tagRepository
-                .findAllByUserIdAndNameIn(userId, tagNames)
+                .findAllByUserIdAndNameIn(userId, requestedTagNamesUnique)
                 .stream()
                 .collect(Collectors.toMap(TagEntity::getName, Function.identity()));
 
@@ -41,7 +44,17 @@ public class TagService {
     private Set<TagEntity> mergeTags(Set<TagDto> requestDto,
                                      Map<String, TagEntity> existingTags,
                                      String userId) {
-        return requestDto.stream()
+
+        // Используем LinkedHashMap, чтобы сохранить порядок и убрать дубли по имени
+        Map<String, TagDto> uniqueByName = requestDto.stream()
+                .collect(Collectors.toMap(
+                        TagDto::name,    // ключ — имя тега
+                        dto -> dto,      // значение — сам DTO
+                        (first, second) -> first, // если два DTO с одним именем — берём первый
+                        LinkedHashMap::new
+                ));
+
+        return uniqueByName.values().stream()
                 .map(tagFromRequest -> {
                     TagEntity existingTag = existingTags.get(tagFromRequest.name());
                     return existingTag != null
