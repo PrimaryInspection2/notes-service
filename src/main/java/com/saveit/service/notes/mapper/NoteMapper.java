@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -48,13 +47,6 @@ public class NoteMapper {
         existing.setSource(dto.source());
         existing.setStatus(dto.status());
         existing.setPriority(dto.priority());
-
-        if (dto.tags() != null) {
-            Set<TagEntity> updatedTags = dto.tags().stream()
-                    .map(tagDto -> tagMapper.toEntity(tagDto, existing.getUserId()))
-                    .collect(Collectors.toSet());
-            existing.setTags(updatedTags);
-        }
     }
 
     public NoteResponseDto toDto(NoteEntity entity) {

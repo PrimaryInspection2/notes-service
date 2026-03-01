@@ -50,6 +50,7 @@ public class NoteEntity implements Persistable<@NonNull String> {
     @Column(nullable = false)
     private NotePriority priority;
 
+    //todo consider to add scheduled job to remove orphan tags
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "note_tags",
