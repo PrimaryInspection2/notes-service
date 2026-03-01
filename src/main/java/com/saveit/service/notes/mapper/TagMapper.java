@@ -5,8 +5,6 @@ import com.saveit.service.notes.web.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 @RequiredArgsConstructor
 public class TagMapper {

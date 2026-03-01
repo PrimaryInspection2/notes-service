@@ -2,4 +2,9 @@ spring:
   datasource:
     username: note-service-local-user
     password: note-service-local-password
-    url: jdbc:postgresql://localhost:5433/notes-service
+    url: jdbc:postgresql://localhost:5477/notes-service
+
+logging:
+  level:
+    com.saveit: DEBUG
+    org.springframework: DEBUG

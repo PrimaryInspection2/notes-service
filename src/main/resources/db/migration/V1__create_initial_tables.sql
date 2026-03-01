@@ -6,7 +6,7 @@ CREATE TABLE notes (
                        source VARCHAR(255),
                        status VARCHAR(50),
                        priority VARCHAR(50) NOT NULL,
-                        created_at TIMESTAMP NOT NULL,
+                       created_at TIMESTAMP NOT NULL,
                        updated_at TIMESTAMP NOT NULL
 );
 
@@ -16,6 +16,8 @@ CREATE TABLE tags (
                       name VARCHAR(100) NOT NULL,
                       color VARCHAR(7),
                       description VARCHAR(255),
+                      created_at TIMESTAMP NOT NULL,
+                      updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE note_tags (

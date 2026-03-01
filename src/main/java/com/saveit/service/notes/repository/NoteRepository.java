@@ -12,4 +12,6 @@ public interface NoteRepository extends JpaRepository<@NonNull NoteEntity, @NonN
 
     Set<NoteEntity> findAllByUserId(String userId);
 
+    Set<NoteEntity> findDistinctByUserIdAndTags_TagIdIn(String userId, Set<String> tagIds);
+
 }

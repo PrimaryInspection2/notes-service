@@ -1,6 +1,7 @@
 package com.saveit.service.notes.web.controller;
 
 import com.saveit.service.notes.service.NoteService;
+import com.saveit.service.notes.web.dto.GetNotesRequestDto;
 import com.saveit.service.notes.web.dto.NoteServiceRequestDto;
 import com.saveit.service.notes.web.dto.NoteResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ public class NotesController {
     private final NoteService notesService;
 
     @PostMapping
-    public NoteResponseDto create(@RequestBody NoteServiceRequestDto request) {
-        log.info("Create note for");
-        return notesService.create(request);
+    public NoteResponseDto processNote(@RequestBody NoteServiceRequestDto request) {
+        log.info("Processing note for userId:{}" , request.userId());
+        return notesService.processNote(request);
     }
 
     @GetMapping("/{id}")
@@ -29,22 +30,16 @@ public class NotesController {
         return notesService.getById(id);
     }
 
-    @PutMapping("/{id}")
-    public NoteResponseDto update(@RequestBody NoteServiceRequestDto request) {
-        log.info("Update note id={}", request.noteId());
-        return notesService.update(request);
-    }
-
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
         log.info("Delete note id={}", id);
         notesService.delete(id);
     }
 
-    @GetMapping
-    public Set<NoteResponseDto> getAll(@RequestParam String userId) {
-        log.info("Get all notes for userId={}", userId);
-        return notesService.getAllByUserId(userId);
+    @GetMapping("/all")
+    public Set<NoteResponseDto> getAll(@RequestBody GetNotesRequestDto  request) {
+        log.info("Get all notes for userId={}", request.userId());
+        return notesService.getAllByUserId(request);
     }
 
 }

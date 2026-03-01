@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("it")
-@SpringBootTest(classes = {NotesServiceApplication.class, TestContainersConfiguration.class})
+@SpringBootTest(classes = {TestContainersConfiguration.class})
 class NotesServiceApplicationIT {
 
     @Test

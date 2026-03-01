@@ -1,6 +1,6 @@
 logging:
   level:
-    com.saveit: ${LOGGING_LEVEL_APP:INFO}
-    org.springframework: ${LOGGING_LEVEL_SPRING:INFO}
+    com.saveit: DEBUG
+    org.springframework: DEBUG
 
 
