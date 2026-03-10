@@ -9,14 +9,14 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @Profile("it")
-@TestConfiguration(proxyBeanMethods = false)
-public class TestContainersConfiguration {
+@TestConfiguration
+public class TestContainersConfig {
 
     @Bean
     @ServiceConnection
     @SuppressWarnings("resource")
     public PostgreSQLContainer postgresContainer() {
-        return new PostgreSQLContainer(DockerImageName.parse("postgres:17.2-alpine"))
+        return new PostgreSQLContainer(DockerImageName.parse("postgres:17-alpine"))
                 .withDatabaseName("notes-service")
                 .withUsername("note-service-local-user")
                 .withPassword("note-service-local-password")

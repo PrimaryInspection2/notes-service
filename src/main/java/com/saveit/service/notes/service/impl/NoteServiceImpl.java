@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,8 @@ public class NoteServiceImpl implements NoteService {
     @Override
     @Transactional
     public NoteResponseDto processNote(NoteServiceRequestDto noteRequest) {
-        return noteRepository.findById(noteRequest.noteId())
+        return Optional.ofNullable(noteRequest.noteId())
+                .flatMap(noteRepository::findById)
                 .map(existing -> updateNote(existing, noteRequest))
                 .orElseGet(() -> createNote(noteRequest));
     }
@@ -45,6 +47,7 @@ public class NoteServiceImpl implements NoteService {
 
     //todo to be implemented
     @Override
+    @Transactional
     public void delete(String id) {
         log.info("Deleting note with id={}", id);
         noteRepository.deleteById(id);
@@ -76,6 +79,7 @@ public class NoteServiceImpl implements NoteService {
         NoteEntity entity = noteMapper.toEntity(dto);
         entity.setTags(processedTags);
 
+        //todo fix it for tests
         NoteEntity saved = noteRepository.saveAndFlush(entity);
 
         return noteMapper.toDto(saved);
@@ -87,8 +91,9 @@ public class NoteServiceImpl implements NoteService {
         noteMapper.updateEntity(existing, dto);
         existing.setTags(updatedTags);
 
-        NoteEntity saved = noteRepository.saveAndFlush(existing);
+        //todo fix it for tests
+        NoteEntity updated = noteRepository.saveAndFlush(existing);
 
-        return noteMapper.toDto(saved);
+        return noteMapper.toDto(updated);
     }
 }

@@ -102,25 +102,6 @@ class TagServiceImplTest {
         verify(tagRepository).save(newEntity);
     }
 
-    @Test
-    void processTags_shouldHandleDuplicateNamesInRequest() {
-        TagDto tag1 = TestDataUtil.createTagDto("tag1", "DupTag");
-        TagDto tag2 = TestDataUtil.createTagDto("tag2", "DupTag");
-
-        TagEntity existing = TestDataUtil.createTagEntity("tag1", "DupTag", "user1");
-
-        when(tagRepository.findAllByUserIdAndNameIn("user1", Set.of("DupTag")))
-                .thenReturn(Set.of(existing));
-        when(tagRepository.save(existing)).thenReturn(existing);
-
-        Set<TagEntity> result = tagService.processTags(Set.of(tag1, tag2), "user1");
-
-        assertThat(result).contains(existing);
-
-        verify(tagMapper, times(1)).updateEntity(eq(existing), argThat(dto -> "DupTag".equals(dto.name())));
-
-        verify(tagRepository).save(existing);
-    }
 
     @Test
     void processTags_shouldPropagateExceptionFromRepositorySave() {

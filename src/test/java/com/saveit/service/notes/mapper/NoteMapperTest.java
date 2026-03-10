@@ -26,11 +26,11 @@ class NoteMapperTest {
 
     @Test
     void toEntity_shouldMapFieldsWithoutTags() {
-        NoteServiceRequestDto dto = createNoteRequest("note1", "user1");
+        NoteServiceRequestDto dto = createNoteRequest(null, "user1");
 
         NoteEntity entity = noteMapper.toEntity(dto);
 
-        assertThat(entity.getNoteId()).isEqualTo("note1");
+        assertThat(entity.getNoteId()).isNotNull();
         assertThat(entity.getUserId()).isEqualTo("user1");
         assertThat(entity.getTitle()).isEqualTo(dto.title());
         assertThat(entity.getContent()).isEqualTo(dto.content());

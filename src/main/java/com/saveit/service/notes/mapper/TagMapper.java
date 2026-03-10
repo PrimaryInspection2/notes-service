@@ -5,13 +5,15 @@ import com.saveit.service.notes.web.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class TagMapper {
 
     public TagEntity toEntity(TagDto dto, String userId) {
         TagEntity entity = new TagEntity();
-        entity.setTagId(dto.tagId());
+        entity.setTagId(UUID.randomUUID().toString());
         entity.setUserId(userId); //fixme implement it when user-service ready
         entity.setName(dto.name());
         entity.setColor(dto.color());

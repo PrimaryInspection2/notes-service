@@ -1,0 +1,3 @@
+DELETE FROM note_tags;
+DELETE FROM tags;
+DELETE FROM notes;
