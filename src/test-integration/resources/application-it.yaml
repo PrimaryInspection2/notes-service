@@ -1,6 +1,4 @@
 logging:
   level:
     com.saveit: DEBUG
-    org.springframework: DEBUG
-
-
+    org.springframework: INFO

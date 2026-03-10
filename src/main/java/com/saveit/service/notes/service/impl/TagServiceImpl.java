@@ -45,12 +45,11 @@ public class TagServiceImpl implements TagService {
                                      Map<String, TagEntity> existingTags,
                                      String userId) {
 
-        // Используем LinkedHashMap, чтобы сохранить порядок и убрать дубли по имени
         Map<String, TagDto> uniqueByName = requestDto.stream()
                 .collect(Collectors.toMap(
-                        TagDto::name,    // ключ — имя тега
-                        dto -> dto,      // значение — сам DTO
-                        (first, second) -> first, // если два DTO с одним именем — берём первый
+                        TagDto::name,
+                        dto -> dto,
+                        (first, second) -> first,
                         LinkedHashMap::new
                 ));
 

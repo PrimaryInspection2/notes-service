@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,7 +24,7 @@ public class NoteMapper {
 
     public NoteEntity toEntity(NoteServiceRequestDto dto) {
         NoteEntity entity = new NoteEntity();
-        entity.setNoteId(dto.noteId());
+        entity.setNoteId(UUID.randomUUID().toString());
         entity.setUserId(dto.userId());
         entity.setTitle(dto.title());
         entity.setContent(dto.content());

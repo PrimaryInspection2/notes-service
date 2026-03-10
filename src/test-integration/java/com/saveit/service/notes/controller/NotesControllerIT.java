@@ -5,6 +5,7 @@ import com.saveit.service.notes.web.controller.NotesController;
 import com.saveit.service.notes.web.dto.GetNotesRequestDto;
 import com.saveit.service.notes.web.dto.NoteResponseDto;
 import com.saveit.service.notes.web.dto.NoteServiceRequestDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -100,11 +101,12 @@ class NotesControllerIT {
     }
 
     @Test
-    void getById_shouldReturn500_whenNotFound() throws Exception {
-        when(noteService.getById("note1")).thenThrow(new RuntimeException("Not found"));
+    void getById_shouldReturn404_whenNotFound() throws Exception {
+        when(noteService.getById("note1"))
+                .thenThrow(new EntityNotFoundException("Note not found: note1"));
 
         mockMvc.perform(get("/note/{id}", "note1"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isNotFound());
 
         verify(noteService).getById("note1");
     }
@@ -115,6 +117,17 @@ class NotesControllerIT {
 
         mockMvc.perform(delete("/note/{id}", "note1"))
                 .andExpect(status().isOk());
+
+        verify(noteService).delete("note1");
+    }
+
+    @Test
+    void delete_shouldReturn404_whenNoteNotFound() throws Exception {
+        doThrow(new EntityNotFoundException("Note not found: note1"))
+                .when(noteService).delete("note1");
+
+        mockMvc.perform(delete("/note/{id}", "note1"))
+                .andExpect(status().isNotFound());
 
         verify(noteService).delete("note1");
     }
@@ -134,7 +147,7 @@ class NotesControllerIT {
         when(noteService.getAllByUserId(getNotesRequestDto))
                 .thenReturn(Set.of(noteResponseDto));
 
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getNotesRequestDto)))
                 .andExpect(status().isOk())
@@ -149,7 +162,7 @@ class NotesControllerIT {
         when(noteService.getAllByUserId(getNotesRequestDto))
                 .thenReturn(Set.of());
 
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getNotesRequestDto)))
                 .andExpect(status().isOk())
@@ -163,7 +176,7 @@ class NotesControllerIT {
         when(noteService.getAllByUserId(getNotesRequestDto))
                 .thenThrow(new RuntimeException("Service error"));
 
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getNotesRequestDto)))
                 .andExpect(status().isInternalServerError());

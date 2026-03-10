@@ -19,11 +19,11 @@ class TagMapperTest {
 
     @Test
     void toEntity_shouldMapAllFields() {
-        TagDto dto = TestDataUtil.createTagDto("tag1", "MyTag");
+        TagDto dto = TestDataUtil.createTagDto(null, "MyTag");
 
         TagEntity entity = tagMapper.toEntity(dto, "user1");
 
-        assertThat(entity.getTagId()).isEqualTo("tag1");
+        assertThat(entity.getTagId()).isNotNull();
         assertThat(entity.getName()).isEqualTo("MyTag");
         assertThat(entity.getColor()).isEqualTo("Red");
         assertThat(entity.getDescription()).isEqualTo("Description MyTag");
