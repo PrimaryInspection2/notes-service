@@ -22,7 +22,7 @@ public class SecurityConfiguration {
     public String[] utilityEndpointsWhitelistNonProd() {
         return new String[]{
                 // -- actuator
-                "/actuator/health", "/actuator/prometheus",
+                "/actuator/**",
                 // -- Swagger UI
                 "/v3/api-docs/", "/swagger-ui.html", "/swagger-ui/"};
     }

@@ -6,9 +6,7 @@ spring:
   datasource:
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
-    url_protocol: "jdbc:postgresql://"
-    url_port: ":5478/"
-    url: ${spring.datasource.url_protocol}${DATASOURCE_HOST}${spring.datasource.url_port}${DATASOURCE_DBNAME}
+    url: jdbc:postgresql://${DATASOURCE_HOST}:5432/${DATASOURCE_DBNAME}
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -24,7 +22,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: info, health, metrics, loggers, monitoring
+        include: info, health, metrics, loggers, monitoring, prometheus
   endpoint:
     health:
       show-details: always

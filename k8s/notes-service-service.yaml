@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-service
+  labels:
+    app: notes-service
+spec:
+  # ClusterIP = internal only, accessible within cluster via DNS
+  # notes-service-bff will reach this via http://notes-service:9004
+  type: ClusterIP
+  selector:
+    app: notes-service
+  ports:
+    # main application port
+    - name: http
+      port: 9004
+      targetPort: 9004
+    # actuator port — for internal monitoring only
+    - name: actuator
+      port: 9192
+      targetPort: 9192
