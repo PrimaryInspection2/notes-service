@@ -2,15 +2,45 @@ services:
   postgres:
     image: postgres:17-alpine
     container_name: notes-postgres
-    restart: unless-stopped
+    restart: always
     ports:
-      - "5478:5432"
+      - "5678:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-note-service-local-user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-note-service-local-password}
-      POSTGRES_DB: ${POSTGRES_DB:-notes-service}
+      POSTGRES_USER: note-service-local-user
+      POSTGRES_PASSWORD: note-service-local-password
+      POSTGRES_DB: notes-service
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  notes-service:
+    build: .
+    container_name: notes-service
+    restart: always
+    ports:
+      - "9004:9004"
+      - "9192:9192"
+    environment:
+      SPRING_PROFILE_ACTIVE: local
+      DATASOURCE_USERNAME: note-service-local-user
+      DATASOURCE_PASSWORD: note-service-local-password
+      DATASOURCE_HOST: postgres
+      DATASOURCE_DBNAME: DEBUG
+      LOGGING_LEVEL_APP: DEBUG
+      LOGGING_LEVEL_SPRING: DEBUG
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:9192/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 volumes:
   postgres-data:

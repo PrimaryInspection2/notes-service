@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notes-service-config
+data:
+  # --- notes-service ---
+  SPRING_PROFILE_ACTIVE: "dev"
+  # must match postgres Service name below
+  DATASOURCE_HOST: "postgres-service"
+  DATASOURCE_DBNAME: "notes-service"
+  LOGGING_LEVEL_APP: "DEBUG"
+  LOGGING_LEVEL_SPRING: "DEBUG"
+
+  # --- postgres ---
+  POSTGRES_DB: "notes-service"

@@ -6,7 +6,13 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
+# IntelliJ IDEA
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/dataSources/
+.idea/httpRequests/
 .idea/**/workspace.xml
+
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
@@ -14,7 +20,11 @@
 
 # AWS User-specific
 .idea/**/aws.xml
-
+.env
+.env.*
+.sh
+.sh.*
+k8s/secret.yaml
 # Generated files
 .idea/**/contentModel.xml
 
@@ -202,3 +212,4 @@ $RECYCLE.BIN/
 /target/classes/application-local.yaml
 /target/classes/application.yaml
 /target/
+/k8s/notes-service-secret.yaml

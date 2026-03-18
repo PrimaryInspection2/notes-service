@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-service
+  labels:
+    app: notes-service
+spec:
+  # number of pod replicas to run
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-service
+  template:
+    metadata:
+      labels:
+        app: notes-service
+    spec:
+      containers:
+        - name: notes-service
+          # use specific image tag, never use 'latest' in production
+          image: andreyjava404/notes-service:4.0.2-1c717e0
+          # always pull from registry to ensure latest tag is used
+          imagePullPolicy: Always
+          ports:
+            # main application port
+            - containerPort: 9004
+            # actuator/management port
+            - containerPort: 9192
+          env:
+            # non-sensitive config from ConfigMap
+            - name: SPRING_PROFILE_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-service-config
+                  key: SPRING_PROFILE_ACTIVE
+            - name: DATASOURCE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-service-config
+                  key: DATASOURCE_HOST
+            - name: DATASOURCE_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-service-config
+                  key: DATASOURCE_DBNAME
+            - name: LOGGING_LEVEL_APP
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-service-config
+                  key: LOGGING_LEVEL_APP
+            - name: LOGGING_LEVEL_SPRING
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-service-config
+                  key: LOGGING_LEVEL_SPRING
+            # sensitive config from Secret
+            - name: DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: notes-service-secret
+                  key: DATASOURCE_USERNAME
+            - name: DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notes-service-secret
+                  key: DATASOURCE_PASSWORD
+          # liveness probe — restarts container if app is unhealthy
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9192
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          # readiness probe — removes pod from load balancer if not ready
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9192
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # resource limits — important for Autopilot
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always
