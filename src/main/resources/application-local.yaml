@@ -4,6 +4,9 @@ spring:
     password: note-service-local-password
     url: jdbc:postgresql://localhost:5678/notes-service
 
+server:
+  port: 9000
+
 logging:
   level:
     com.saveit: DEBUG

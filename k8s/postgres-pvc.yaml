@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  namespace: notes-app
   name: postgres-data
   labels:
     app: postgres
