@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notes-service
+  namespace: notes-app
   labels:
     app: notes-service
 spec:
@@ -18,7 +19,7 @@ spec:
       containers:
         - name: notes-service
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/notes-service:4.0.2-1c717e0
+          image: andreyjava404/notes-service:latest
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:
@@ -85,8 +86,8 @@ spec:
           # resource limits — important for Autopilot
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: "256Mi"
+              cpu: "250m"
             limits:
               memory: "512Mi"
               cpu: "500m"

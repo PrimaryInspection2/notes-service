@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: notes-app
   name: postgres
   labels:
     app: postgres
@@ -41,32 +42,26 @@ spec:
                 secretKeyRef:
                   name: notes-service-secret
                   key: DATASOURCE_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata #fix for GCE postgres deployment
           # liveness probe — checks if postgres is accepting connections
           livenessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - pg_isready -U $(POSTGRES_USER) -d $(POSTGRES_DB)
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 5
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
 
           readinessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - pg_isready -U $(POSTGRES_USER) -d $(POSTGRES_DB)
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
+                - "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: "256Mi"
+              cpu: "250m"
             limits:
               memory: "512Mi"
               cpu: "500m"
