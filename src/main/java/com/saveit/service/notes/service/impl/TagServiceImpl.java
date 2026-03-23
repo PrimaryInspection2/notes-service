@@ -29,12 +29,9 @@ public class TagServiceImpl implements TagService {
         if (requestDto == null || requestDto.isEmpty()) {
             return Collections.emptySet();
         }
-        Set<String> requestedTagNamesUnique = requestDto.stream()
-                .map(TagDto::name)
-                .collect(Collectors.toSet());
 
         Map<String, TagEntity> existingTags = tagRepository
-                .findAllByUserIdAndNameIn(userId, requestedTagNamesUnique)
+                .findAllByUserId(userId)
                 .stream()
                 .collect(Collectors.toMap(TagEntity::getName, Function.identity()));
 

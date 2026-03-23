@@ -52,7 +52,7 @@ class TagServiceImplTest {
         TagDto dto = TestDataUtil.createTagDto("tag1", "NewTag");
         TagEntity entity = TestDataUtil.createTagEntity("tag1", "NewTag", "user1");
 
-        when(tagRepository.findAllByUserIdAndNameIn("user1", Set.of("NewTag")))
+        when(tagRepository.findAllByUserId("user1"))
                 .thenReturn(Collections.emptySet());
         when(tagMapper.toEntity(dto, "user1")).thenReturn(entity);
         when(tagRepository.save(entity)).thenReturn(entity);
@@ -69,7 +69,7 @@ class TagServiceImplTest {
         TagDto dto = TestDataUtil.createTagDto("tag1", "ExistTag");
         TagEntity existing = TestDataUtil.createTagEntity("tag1", "ExistTag", "user1");
 
-        when(tagRepository.findAllByUserIdAndNameIn("user1", Set.of("ExistTag")))
+        when(tagRepository.findAllByUserId("user1"))
                 .thenReturn(Set.of(existing));
         when(tagRepository.save(existing)).thenReturn(existing);
 
@@ -88,7 +88,7 @@ class TagServiceImplTest {
         TagEntity existingEntity = TestDataUtil.createTagEntity("tag1", "ExistTag", "user1");
         TagEntity newEntity = TestDataUtil.createTagEntity("tag2", "NewTag", "user1");
 
-        when(tagRepository.findAllByUserIdAndNameIn("user1", Set.of("ExistTag", "NewTag")))
+        when(tagRepository.findAllByUserId("user1"))
                 .thenReturn(Set.of(existingEntity));
         when(tagMapper.toEntity(newTag, "user1")).thenReturn(newEntity);
         when(tagRepository.save(newEntity)).thenReturn(newEntity);
@@ -107,7 +107,7 @@ class TagServiceImplTest {
     void processTags_shouldPropagateExceptionFromRepositorySave() {
         TagDto tagDto = TestDataUtil.createTagDto("tag1", "FailTag");
 
-        when(tagRepository.findAllByUserIdAndNameIn("user1", Set.of("FailTag")))
+        when(tagRepository.findAllByUserId("user1"))
                 .thenReturn(Collections.emptySet());
         when(tagMapper.toEntity(tagDto, "user1")).thenReturn(new TagEntity());
         when(tagRepository.save(any())).thenThrow(new RuntimeException("DB error"));
