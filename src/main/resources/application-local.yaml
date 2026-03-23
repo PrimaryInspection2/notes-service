@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: note-service-local-user
-    password: note-service-local-password
-    url: jdbc:postgresql://localhost:5678/notes-service
+    username: db_notes_service_test_usr
+    password: my_secret_pwd_notes_service
+    url: jdbc:postgresql://localhost:5432/notes-service
 
 server:
   port: 9000

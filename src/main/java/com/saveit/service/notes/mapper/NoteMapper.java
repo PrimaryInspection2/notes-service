@@ -31,14 +31,6 @@ public class NoteMapper {
         entity.setSource(dto.source());
         entity.setStatus(dto.status());
         entity.setPriority(dto.priority());
-
-        if (dto.tags() != null) {
-            Set<TagEntity> tagEntities = dto.tags().stream()
-                    .map(tagDto -> tagMapper.toEntity(tagDto, dto.userId()))
-                    .collect(Collectors.toSet());
-            entity.setTags(tagEntities);
-        }
-
         return entity;
     }
 
