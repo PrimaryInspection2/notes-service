@@ -6,8 +6,6 @@ metadata:
   labels:
     app: notes-service
 spec:
-  # number of pod replicas to run
-  replicas: 1
   selector:
     matchLabels:
       app: notes-service
@@ -19,7 +17,7 @@ spec:
       containers:
         - name: notes-service
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/notes-service:4.0.2-665f3ab
+          image: andreyjava404/notes-service:4.0.2-601be5a
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:

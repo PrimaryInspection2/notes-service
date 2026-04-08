@@ -17,6 +17,9 @@ server:
     context-path: /service-notes
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0  # todo set to 0.01 in prod
   server:
     port: 9192
   endpoints:
