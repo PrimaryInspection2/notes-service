@@ -17,7 +17,7 @@ spec:
       containers:
         - name: notes-service
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/notes-service:4.0.2-601be5a
+          image: andreyjava404/notes-service:4.0.2-b94718b
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:
