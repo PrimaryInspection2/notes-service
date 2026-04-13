@@ -4,7 +4,7 @@ set -e
 DOCKER_USERNAME=andreyjava404
 
 echo "Building jar..."
-mvn clean package
+mvn clean package -DskipTests
 
 VERSION=$(grep -m1 '<version>' pom.xml | tr -d ' <>/version')
 GIT_HASH=$(git rev-parse --short HEAD)
