@@ -17,6 +17,10 @@ server:
     context-path: /service-notes
 
 management:
+  observations:
+    enable:
+      spring:
+        security: false
   tracing:
     sampling:
       probability: 1.0
