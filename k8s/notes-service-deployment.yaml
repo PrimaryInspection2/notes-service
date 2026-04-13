@@ -17,7 +17,7 @@ spec:
       containers:
         - name: notes-service
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/notes-service:4.0.2-b94718b
+          image: andreyjava404/notes-service:4.0.2-2fc6c9f
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:
@@ -63,24 +63,33 @@ spec:
                 secretKeyRef:
                   name: notes-service-secret
                   key: DATASOURCE_PASSWORD
-          # liveness probe — restarts container if app is unhealthy
+
+          # startup probe — blocks liveness/readiness until app is ready; prevents premature restarts during slow startup
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness  # spring boot actuator health endpoint
+              port: 9192              # management port, separate from app port
+            failureThreshold: 30      # allow up to 30 failures before killing container (30 * 10s = 300s max startup time)
+            periodSeconds: 10         # check every 10 seconds
+            timeoutSeconds: 5         # fail if no response within 5 seconds
+
+          # liveness probe — restarts container if app is unhealthy; only runs after startupProbe passes
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/liveness
               port: 9192
-            initialDelaySeconds: 120
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
-          # readiness probe — removes pod from load balancer if not ready
+            periodSeconds: 30         # check every 30 seconds (less frequent — just detects deadlocks/crashes)
+            timeoutSeconds: 10        # more lenient timeout — app under load may respond slowly
+            failureThreshold: 3       # restart after 3 consecutive failures (3 * 30s = 90s before restart)
+
+          # readiness probe — removes pod from load balancer if not ready to serve traffic; only runs after startupProbe passes
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/readiness
               port: 9192
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            periodSeconds: 10         # check every 10 seconds (more frequent — affects live traffic routing)
+            timeoutSeconds: 5         # stricter timeout — unresponsive pod should stop receiving traffic quickly
+            failureThreshold: 3       # remove from load balancer after 3 consecutive failures (3 * 10s = 30s)
           # resource limits — important for Autopilot
           resources:
             requests:

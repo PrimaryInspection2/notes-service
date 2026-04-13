@@ -32,6 +32,13 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true  # enables /health/liveness and /health/readiness
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
 logging:
   level:
