@@ -19,10 +19,10 @@ server:
 management:
   tracing:
     sampling:
-      probability: 1.0  # todo set to 0.01 in prod
-  zipkin:
-    tracing:
-      endpoint: http://zipkin.notes-app.svc.cluster.local:9411/api/v2/spans
+      probability: 1.0
+    export:
+      zipkin:
+        endpoint: http://zipkin.notes-app.svc.cluster.local:9411/api/v2/spans
   server:
     port: 9192
   endpoints:
