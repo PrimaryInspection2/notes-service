@@ -17,6 +17,22 @@ server:
     context-path: /service-notes
 
 management:
+  observations:
+    http:
+      server:
+        requests:
+          filter:
+            pattern: "/actuator/**" #disable actuator tracing
+            enabled: false
+    enable:
+      spring:
+        security: false #disable security tracing
+  tracing:
+    sampling:
+      probability: 1.0
+    export:
+      zipkin:
+        endpoint: http://zipkin.notes-app.svc.cluster.local:9411/api/v2/spans
   server:
     port: 9192
   endpoints:
@@ -26,6 +42,13 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
 logging:
   level:

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -23,44 +22,55 @@ public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
 
+
     @Override
     @Transactional
     public Set<TagEntity> processTags(Set<TagDto> requestDto, String userId) {
         if (requestDto == null || requestDto.isEmpty()) {
             return Collections.emptySet();
         }
-        Set<String> requestedTagNamesUnique = requestDto.stream()
-                .map(TagDto::name)
-                .collect(Collectors.toSet());
 
-        Map<String, TagEntity> existingTags = tagRepository
-                .findAllByUserIdAndNameIn(userId, requestedTagNamesUnique)
+        // fetch existing tags for user once
+        Map<String, TagEntity> existingById = tagRepository.findAllByUserId(userId)
+                .stream()
+                .collect(Collectors.toMap(TagEntity::getTagId, Function.identity()));
+
+        Map<String, TagEntity> existingByName = tagRepository.findAllByUserId(userId)
                 .stream()
                 .collect(Collectors.toMap(TagEntity::getName, Function.identity()));
 
-        return mergeTags(requestDto, existingTags, userId);
-    }
-
-    private Set<TagEntity> mergeTags(Set<TagDto> requestDto,
-                                     Map<String, TagEntity> existingTags,
-                                     String userId) {
-
+        // deduplicate by name in request to avoid creating duplicate tags in one request
         Map<String, TagDto> uniqueByName = requestDto.stream()
-                .collect(Collectors.toMap(
-                        TagDto::name,
-                        dto -> dto,
-                        (first, second) -> first,
-                        LinkedHashMap::new
-                ));
+                .filter(t -> t.name() != null && !t.name().isBlank())
+                .collect(Collectors.toMap(TagDto::name, t -> t, (first, second) -> first));
 
         return uniqueByName.values().stream()
-                .map(tagFromRequest -> {
-                    TagEntity existingTag = existingTags.get(tagFromRequest.name());
-                    return existingTag != null
-                            ? updateTagEntity(existingTag, tagFromRequest)
-                            : createTagEntity(tagFromRequest, userId);
-                })
+                .map(tag -> resolveTag(tag, userId, existingById, existingByName))
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Resolve tag: update if exists (by ID or name), otherwise create new
+     */
+    private TagEntity resolveTag(TagDto tag, String userId,
+                                 Map<String, TagEntity> existingById,
+                                 Map<String, TagEntity> existingByName) {
+
+        // 1. Update by ID if present
+        if (tag.tagId() != null && existingById.containsKey(tag.tagId())) {
+            return updateTagEntity(existingById.get(tag.tagId()), tag);
+        }
+
+        // 2. Update existing tag by name if it already exists for the user
+        //    Edge-case: client sends { tagId: null, name: "work" } but a tag with this name already exists.
+        //    We update the existing tag instead of creating a new one. //fixme when finalized service contract (validation of tagId and create/update flows)
+        TagEntity existing = existingByName.get(tag.name());
+        if (existing != null) {
+            return updateTagEntity(existing, tag);
+        }
+
+        // 3. Otherwise create new
+        return createTagEntity(tag, userId);
     }
 
     private TagEntity createTagEntity(TagDto dto, String userId) {

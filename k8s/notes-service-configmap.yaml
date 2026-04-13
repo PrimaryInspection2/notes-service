@@ -11,6 +11,3 @@ data:
   DATASOURCE_DBNAME: "notes-service"
   LOGGING_LEVEL_APP: "DEBUG"
   LOGGING_LEVEL_SPRING: "DEBUG"
-
-  # --- postgres ---
-  POSTGRES_DB: "notes-service"

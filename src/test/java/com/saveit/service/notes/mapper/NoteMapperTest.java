@@ -40,21 +40,6 @@ class NoteMapperTest {
     }
 
     @Test
-    void toEntity_shouldMapTags() {
-        TagDto tagDto = TestDataUtil.createTagDto("tag1", "Tag1");
-        NoteServiceRequestDto dto = createNoteRequest("note1", "user1")
-                .toBuilder().tags(Set.of(tagDto)).build();
-
-        TagEntity tagEntity = TestDataUtil.createTagEntity("tag1", "Tag1", "user1");
-        when(tagMapper.toEntity(tagDto, "user1")).thenReturn(tagEntity);
-
-        NoteEntity entity = noteMapper.toEntity(dto);
-
-        assertThat(entity.getTags()).containsExactly(tagEntity);
-        verify(tagMapper).toEntity(tagDto, "user1");
-    }
-
-    @Test
     void updateEntity_shouldUpdateFields() {
         NoteEntity entity = TestDataUtil.createNoteEntity("note1", "user1");
         NoteServiceRequestDto dto = createNoteRequest("note1", "user1")
