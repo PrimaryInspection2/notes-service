@@ -18,9 +18,15 @@ server:
 
 management:
   observations:
+    http:
+      server:
+        requests:
+          filter:
+            pattern: "/actuator/**" #disable actuator tracing
+            enabled: false
     enable:
       spring:
-        security: false
+        security: false #disable security tracing
   tracing:
     sampling:
       probability: 1.0
