@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.service.name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "notes-service.labels" . | nindent 4 }}
+data:
+  # --- notes-service ---
+  SPRING_PROFILE_ACTIVE: {{ .Values.service.activeProfile | quote}}
+  # must match postgres Service name below
+  DATASOURCE_HOST: {{ .Values.service.db.datasourceHost | quote}}
+  DATASOURCE_DBNAME: {{ .Values.service.db.datasourceDbName | quote}}
+  LOGGING_LEVEL_APP: {{ .Values.service.loggingLevelApp | quote}}
+  LOGGING_LEVEL_SPRING: {{ .Values.service.loggingLevelSpring | quote}}

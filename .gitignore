@@ -212,6 +212,6 @@ $RECYCLE.BIN/
 /target/classes/application-local.yaml
 /target/classes/application.yaml
 /target/
-/k8s/notes-service-secret.yaml
+/k8s/notes-service-chart/templates/notes-service-secret.yaml
 /k8s/kubernetes_architecture_diagram.svg
 /k8s/deploy-notes-service.sh
