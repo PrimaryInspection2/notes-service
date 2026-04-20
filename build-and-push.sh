@@ -6,7 +6,7 @@ DOCKER_USERNAME=andreyjava404
 echo "Building jar..."
 mvn clean package -DskipTests
 
-VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | grep -v '^\[')
+VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout 2>&1 | awk 'END{print $NF}')
 GIT_HASH=$(git rev-parse --short HEAD)
 TAG="$VERSION-$GIT_HASH"
 
